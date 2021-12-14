@@ -23,3 +23,13 @@ func BenchmarkInsertion(b *testing.B) {
 		BenchmarkSort(10000, NewInsertion())
 	}
 }
+
+func TestShell(t *testing.T) {
+	CheckSorter(NewShell())
+}
+
+func BenchmarkShell(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		BenchmarkSort(10000, NewShell())
+	}
+}
