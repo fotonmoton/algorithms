@@ -24,7 +24,7 @@ func SameInts(a, b []int) bool {
 func CheckSorter(s Sorter) {
 	rand.Seed(time.Now().Unix())
 
-	actual := rand.Perm(100)
+	actual := rand.Perm(1000)
 	expected := make([]int, len(actual))
 	copy(expected, actual)
 
@@ -34,4 +34,10 @@ func CheckSorter(s Sorter) {
 	if !SameInts(actual, expected) {
 		log.Fatalf("wrong order:\n actual:\t%v\n expected:\t%v\n", actual, expected)
 	}
+}
+
+func BenchmarkSort(numItems int, s Sorter) {
+	rand.Seed(time.Now().Unix())
+	items := rand.Perm(numItems)
+	s.Sort(IntSort(items))
 }
