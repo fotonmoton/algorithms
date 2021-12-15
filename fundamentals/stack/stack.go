@@ -1,11 +1,6 @@
 package stack
 
-// "Generic" item.
-// When type parameters will land this type became
-// type Item[T any] T
-type Item interface{}
-
-type Stack interface {
+type Stack[Item any] interface {
 	Push(Item)
 	Pop() Item
 	Size() int
@@ -14,37 +9,37 @@ type Stack interface {
 
 // We use linked list as internal data structure
 // to get O(1) speed for push and pop opeartions
-type node struct {
+type node[Item any] struct {
 	item Item
-	next *node
+	next *node[Item]
 }
 
-type stack struct {
+type stack[OfType any] struct {
 	size int
-	head *node
+	head *node[OfType]
 }
 
-func NewStack() Stack {
-	return &stack{}
+func NewStack[OfType any]() Stack[OfType] {
+	return &stack[OfType]{}
 }
 
-func (s *stack) Push(item Item) {
+func (s *stack[Item]) Push(item Item) {
 	next := s.head
-	s.head = &node{item, next}
+	s.head = &node[Item]{item, next}
 	s.size++
 }
 
-func (s *stack) Pop() Item {
+func (s *stack[Item]) Pop() Item {
 	head := s.head
 	s.head = head.next
 	s.size--
 	return head.item
 }
 
-func (s *stack) Size() int {
+func (s *stack[_]) Size() int {
 	return s.size
 }
 
-func (s *stack) IsEmpty() bool {
+func (s *stack[_]) IsEmpty() bool {
 	return s.size == 0
 }

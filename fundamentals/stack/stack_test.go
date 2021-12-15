@@ -6,18 +6,18 @@ import (
 )
 
 func TestSimple(t *testing.T) {
-	stack := NewStack()
+	stack := NewStack[int]()
 
 	stack.Push(1)
 	stack.Push(2)
 
-	if stack.Pop().(int) != 2 {
+	if stack.Pop() != 2 {
 		log.Fatal("wrong stack value")
 	}
 }
 
 func TestSize(t *testing.T) {
-	stack := NewStack()
+	stack := NewStack[int]()
 
 	if !stack.IsEmpty() {
 		log.Fatal("should be empty")
