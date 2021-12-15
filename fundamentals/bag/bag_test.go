@@ -6,14 +6,14 @@ import (
 )
 
 func TestSimple(t *testing.T) {
-	bag := NewBag()
+	bag := NewBag[int]()
 	sum := 0
 
 	bag.Add(1)
 	bag.Add(2)
 	bag.Add(3)
 
-	bag.ForEach(func(i Item) { sum += i.(int) })
+	bag.ForEach(func(i int) { sum += i })
 
 	if sum != 6 {
 		log.Fatal("wrong items in bag")
@@ -21,14 +21,14 @@ func TestSimple(t *testing.T) {
 }
 
 func TestEmpty(t *testing.T) {
-	bag := NewBag()
+	bag := NewBag[int]()
 	sum := 0
 
 	if bag.Size() != 0 || !bag.IsEmpty() {
 		log.Fatal("bag should be empty")
 	}
 
-	bag.ForEach(func(i Item) { sum += i.(int) })
+	bag.ForEach(func(i int) { sum += i })
 
 	if sum != 0 {
 		log.Fatal("wrong items in bag")

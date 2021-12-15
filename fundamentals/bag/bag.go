@@ -1,11 +1,6 @@
 package bag
 
-// "Generic" item.
-// When type parameters will land this type became
-// type Item[T any] T
-type Item interface{}
-
-type Bag interface {
+type Bag[Item any] interface {
 	Add(Item)
 	Size() int
 	IsEmpty() bool
@@ -14,37 +9,37 @@ type Bag interface {
 
 // We use linked list as internal data structure
 // to get O(1) speed for Add operation
-type node struct {
+type node[Item any] struct {
 	item Item
-	next *node
+	next *node[Item]
 }
 
-type bag struct {
+type bag[OfType any] struct {
 	size int
-	head *node
+	head *node[OfType]
 }
 
-func NewBag() Bag {
-	return &bag{}
+func NewBag[OfType any]() Bag[OfType] {
+	return &bag[OfType]{}
 }
 
-func (b *bag) Add(item Item) {
+func (b *bag[OfType]) Add(item OfType) {
 	next := b.head
-	b.head = &node{item, next}
+	b.head = &node[OfType]{item, next}
 	b.size++
 }
 
-func (b *bag) Size() int {
+func (b *bag[_]) Size() int {
 	return b.size
 }
 
-func (b *bag) IsEmpty() bool {
+func (b *bag[_]) IsEmpty() bool {
 	return b.size == 0
 }
 
 // As for now Go doesn't have iterators.
 // But we can simulate them with ForEach method
-func (b *bag) ForEach(f func(Item)) {
+func (b *bag[OfType]) ForEach(f func(OfType)) {
 	for current := b.head; current != nil; current = current.next {
 		f(current.item)
 	}
