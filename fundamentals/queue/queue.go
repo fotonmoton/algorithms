@@ -1,37 +1,32 @@
 package queue
 
-// "Generic" item.
-// When type parameters will land this type became
-// type Item[T any] T
-type Item interface{}
-
-type Queue interface {
-	Enqueue(Item)
-	Dequeue() Item
+type Queue[T any] interface {
+	Enqueue(T)
+	Dequeue() T
 	Size() int
 	IsEmpty() bool
 }
 
 // We use linked list as internal data structure
 // to get O(1) speed for push and pop opeartions
-type node struct {
+type node[Item any] struct {
 	item Item
-	next *node
+	next *node[Item]
 }
 
-type queue struct {
+type queue[OfType any] struct {
 	size int
-	head *node
-	tail *node
+	head *node[OfType]
+	tail *node[OfType]
 }
 
-func NewQueue() Queue {
-	return &queue{}
+func NewQueue[OfType any]() Queue[OfType] {
+	return &queue[OfType]{}
 }
 
-func (q *queue) Enqueue(item Item) {
+func (q *queue[T]) Enqueue(item T) {
 	oldTail := q.tail
-	q.tail = &node{item: item, next: nil}
+	q.tail = &node[T]{item: item, next: nil}
 	if q.IsEmpty() {
 		q.head = q.tail
 	} else {
@@ -40,7 +35,7 @@ func (q *queue) Enqueue(item Item) {
 	q.size++
 }
 
-func (q *queue) Dequeue() Item {
+func (q *queue[T]) Dequeue() T {
 	first := q.head
 	q.head = q.head.next
 	if q.IsEmpty() {
@@ -50,10 +45,10 @@ func (q *queue) Dequeue() Item {
 	return first.item
 }
 
-func (q *queue) Size() int {
+func (q *queue[T]) Size() int {
 	return q.size
 }
 
-func (q *queue) IsEmpty() bool {
+func (q *queue[T]) IsEmpty() bool {
 	return q.head == nil
 }

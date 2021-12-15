@@ -6,13 +6,13 @@ import (
 )
 
 func TestSimple(t *testing.T) {
-	queue := NewQueue()
+	queue := NewQueue[int]()
 
 	queue.Enqueue(10)
 	queue.Enqueue(20)
 	queue.Enqueue(30)
 
-	first, second := queue.Dequeue().(int), queue.Dequeue().(int)
+	first, second := queue.Dequeue(), queue.Dequeue()
 
 	if first != 10 && second != 20 {
 		log.Fatal("wrong order")
@@ -20,7 +20,7 @@ func TestSimple(t *testing.T) {
 }
 
 func TestSize(t *testing.T) {
-	queue := NewQueue()
+	queue := NewQueue[int]()
 
 	if queue.Size() != 0 {
 		log.Fatal("empty queue should have size 0")
