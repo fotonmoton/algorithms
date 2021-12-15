@@ -10,8 +10,8 @@ import (
 
 // Dijkstra's two stack algorithm for equation evaluation
 func Evaluate(exression string) int {
-	operations := stack.NewStack()
-	values := stack.NewStack()
+	operations := stack.NewStack[string]()
+	values := stack.NewStack[int]()
 
 	for _, part := range strings.Split(exression, " ") {
 		isOperation := part == "+" || part == "-" || part == "*" || part == "/" || part == "sqrt"
@@ -20,17 +20,17 @@ func Evaluate(exression string) int {
 			continue
 		} else if part == ")" {
 			lastOperation := operations.Pop()
-			lastValue := values.Pop().(int)
+			lastValue := values.Pop()
 
 			switch lastOperation {
 			case "+":
-				lastValue = values.Pop().(int) + lastValue
+				lastValue = values.Pop() + lastValue
 			case "-":
-				lastValue = values.Pop().(int) - lastValue
+				lastValue = values.Pop() - lastValue
 			case "*":
-				lastValue = values.Pop().(int) * lastValue
+				lastValue = values.Pop() * lastValue
 			case "/":
-				lastValue = values.Pop().(int) / lastValue
+				lastValue = values.Pop() / lastValue
 			case "sqrt":
 				lastValue = int(math.Sqrt(float64(lastValue)))
 			}
@@ -43,5 +43,5 @@ func Evaluate(exression string) int {
 		}
 	}
 
-	return values.Pop().(int)
+	return values.Pop()
 }
