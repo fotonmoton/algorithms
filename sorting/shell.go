@@ -1,9 +1,7 @@
 package sorting
 
-type shell struct{}
-
-func (*shell) Sort(items Sortable) {
-	len := items.Len()
+func Shell[T any](items []T, less func(a, b T) bool) {
+	len := len(items)
 	gap := 1
 
 	// Calculating gap maximum value.
@@ -13,7 +11,7 @@ func (*shell) Sort(items Sortable) {
 		gap = gap*3 + 1
 	}
 
-	// This loop needed to progressively degrease gap until siple insertion
+	// This loop needed to progressively decrease gap until simple insertion
 	// sort will be used
 	for gap >= 1 {
 
@@ -22,16 +20,12 @@ func (*shell) Sort(items Sortable) {
 
 			// Instead of comparing adjacent elements we compare
 			// gap distance elements and swap them
-			for j := i; j >= gap && items.Less(j, j-gap); j -= gap {
-				items.Swap(j, j-gap)
+			for j := i; j >= gap && less(items[j], items[j-gap]); j -= gap {
+				items[j], items[j-gap] = items[j-gap], items[j]
 			}
 		}
 
 		// "Sedgewick gap sequence"
 		gap = gap / 3
 	}
-}
-
-func NewShell() Sorter {
-	return &shell{}
 }

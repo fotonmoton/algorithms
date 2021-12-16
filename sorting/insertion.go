@@ -2,15 +2,11 @@ package sorting
 
 type insertion struct{}
 
-func (*insertion) Sort(items Sortable) {
-	len := items.Len()
+func Insertion[T any](items []T, less func(a, b T) bool) {
+	len := len(items)
 	for i := 1; i < len; i++ {
-		for j := i; j > 0 && items.Less(j, j-1); j-- {
-			items.Swap(j, j-1)
+		for j := i; j > 0 && less(items[j], items[j-1]); j-- {
+			items[j], items[j-1] = items[j-1], items[j]
 		}
 	}
-}
-
-func NewInsertion() Sorter {
-	return &insertion{}
 }
