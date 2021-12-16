@@ -1,5 +1,7 @@
 package sorting
 
+import "sync"
+
 func merge[T any](items []T, low, mid, hig int, less func(a, b T) bool, aux []T) {
 	i, j := low, mid+1
 
@@ -26,8 +28,11 @@ func merge[T any](items []T, low, mid, hig int, less func(a, b T) bool, aux []T)
 }
 
 func doSort[T any](items []T, low, hig int, less func(a, b T) bool, aux []T) {
+	if hig <= low {
+		return
+	}
 
-	// Optimization 2: if array length is less then 15
+	// Optimization 2: if array length is less than 15
 	// it's imperically prooven that insertion sort
 	// for such arrays can speed up merge sort up to 15%
 	if hig-low <= 15 {
@@ -35,14 +40,16 @@ func doSort[T any](items []T, low, hig int, less func(a, b T) bool, aux []T) {
 		return
 	}
 
-	if hig <= low {
-		return
-	}
-
 	mid := low + (hig-low)/2
 
-	doSort(items, low, mid, less, aux)
-	doSort(items, mid+1, hig, less, aux)
+	// Optimization 3: we can run sorting in parallel.
+	// This is costly optimization because we increase memory
+	// usage by creating WaitGroup instances
+	wg := sync.WaitGroup{}
+	wg.Add(2)
+	go func() { doSort(items, low, mid, less, aux); wg.Done() }()
+	go func() { doSort(items, mid+1, hig, less, aux); wg.Done() }()
+	wg.Wait()
 
 	// Optimization 1: if two subarrays already sorted
 	// we can skip merging them
