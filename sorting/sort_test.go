@@ -33,3 +33,13 @@ func BenchmarkShell(b *testing.B) {
 		BenchmarkSort(10000, Shell[int])
 	}
 }
+
+func TestMerge(t *testing.T) {
+	CheckSliceSorter(Merge[int])
+}
+
+func BenchmarkMerge(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		BenchmarkSort(10000, Merge[int])
+	}
+}
