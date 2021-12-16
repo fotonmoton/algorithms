@@ -43,3 +43,23 @@ func BenchmarkMerge(b *testing.B) {
 		BenchmarkSort(10000, Merge[int])
 	}
 }
+
+func TestParallelMerge(t *testing.T) {
+	CheckSliceSorter(ParallelMerge[int])
+}
+
+func BenchmarkParallelMerge(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		BenchmarkSort(10000, ParallelMerge[int])
+	}
+}
+
+func TestBottomUpMerge(t *testing.T) {
+	CheckSliceSorter(BottomUpMerge[int])
+}
+
+func BenchmarkBottomUpMerge(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		BenchmarkSort(10000, BottomUpMerge[int])
+	}
+}
