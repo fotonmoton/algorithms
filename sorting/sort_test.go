@@ -63,3 +63,13 @@ func BenchmarkBottomUpMerge(b *testing.B) {
 		BenchmarkSort(10000, BottomUpMerge[int])
 	}
 }
+
+func TestQuick(t *testing.T) {
+	CheckSliceSorter(Quick[int])
+}
+
+func BenchmarkQuick(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		BenchmarkSort(10000, Quick[int])
+	}
+}
