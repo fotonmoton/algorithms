@@ -29,7 +29,7 @@ func merge[T any](items []T, low, mid, hig int, less func(a, b T) bool, aux []T)
 
 }
 
-func doSort[T any](items []T, low, hig int, less func(a, b T) bool, aux []T) {
+func doMergeSort[T any](items []T, low, hig int, less func(a, b T) bool, aux []T) {
 	if hig <= low {
 		return
 	}
@@ -44,8 +44,8 @@ func doSort[T any](items []T, low, hig int, less func(a, b T) bool, aux []T) {
 
 	mid := low + (hig-low)/2
 
-	doSort(items, low, mid, less, aux)
-	doSort(items, mid+1, hig, less, aux)
+	doMergeSort(items, low, mid, less, aux)
+	doMergeSort(items, mid+1, hig, less, aux)
 
 	// Optimization 1: if two subarrays already sorted
 	// we can skip merging them
@@ -73,8 +73,8 @@ func doParallelSort[T any](items []T, low, hig int, less func(a, b T) bool, aux 
 	// usage by creating WaitGroup instances
 	wg := sync.WaitGroup{}
 	wg.Add(2)
-	go func() { doSort(items, low, mid, less, aux); wg.Done() }()
-	go func() { doSort(items, mid+1, hig, less, aux); wg.Done() }()
+	go func() { doParallelSort(items, low, mid, less, aux); wg.Done() }()
+	go func() { doParallelSort(items, mid+1, hig, less, aux); wg.Done() }()
 	wg.Wait()
 
 	if less(items[mid], items[mid+1]) {
@@ -88,7 +88,7 @@ func Merge[T any](items []T, less func(a, b T) bool) {
 
 	len := len(items)
 
-	doSort(items, 0, len-1, less, make([]T, len))
+	doMergeSort(items, 0, len-1, less, make([]T, len))
 }
 
 func ParallelMerge[T any](items []T, less func(a, b T) bool) {
