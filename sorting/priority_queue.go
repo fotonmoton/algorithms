@@ -34,7 +34,13 @@ func (pq *priorityQueue[T]) top() T {
 }
 
 func (pq *priorityQueue[T]) insert(item T) {
-	// TODO: increase by square when capacity is full
+	// We can ignore "resize optimization":
+	// append function will create new array for new slice
+	// with doubled capacity when needed
+	// https://github.com/golang/go/blob/master/src/runtime/slice.go#L188
+	// https://go.dev/blog/slices-intro
+	// https://go.dev/play/p/OKtCFskbp2t
+	// https://stackoverflow.com/questions/23531737/how-the-slice-is-enlarged-by-append-is-the-capacity-always-doubled
 	pq.heap = append(pq.heap, item)
 	pq.n++
 	pq.swim(pq.n)
