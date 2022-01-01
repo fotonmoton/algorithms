@@ -11,6 +11,9 @@ type PriorityQueue[T any] interface {
 type priorityQueue[T any] struct {
 	n    int
 	heap []T
+	// Actually this is "less" function.
+	// First element not necessary is less than second,
+	// Can be used both ways to get reversed priority
 	less func(T, T) bool
 }
 
@@ -25,7 +28,7 @@ func NewPQ[T any](less func(T, T) bool) PriorityQueue[T] {
 }
 
 func (pq *priorityQueue[T]) top() T {
-	// After all operations biggest element
+	// After all operations "biggest" element
 	// should be always at the beginning of the array
 	return pq.heap[1]
 }
@@ -40,8 +43,11 @@ func (pq *priorityQueue[T]) insert(item T) {
 func (pq *priorityQueue[T]) delete() T {
 	top := pq.top()
 	pq.swap(1, pq.n)
+	// Discard "biggest" element from queue
+	// for possible GC
 	pq.heap = pq.heap[:pq.n]
 	pq.n--
+	// Reshape heap from top to bottom
 	pq.sink(1)
 	return top
 }
@@ -58,36 +64,44 @@ func (pq *priorityQueue[_]) swap(i, j int) {
 	pq.heap[i], pq.heap[j] = pq.heap[j], pq.heap[i]
 }
 
-func (pq *priorityQueue[T]) swim(start int) {
-	for k := start; k > 1 && pq.less(pq.heap[k/2], pq.heap[k]); k = k / 2 {
-		pq.swap(k/2, k)
+func (pq *priorityQueue[T]) swim(child int) {
+	// Until we reach top of the heap
+	// and parent node is less than current child
+	for child > 1 && pq.less(pq.heap[child/2], pq.heap[child]) {
+
+		// We swap parent with the child
+		pq.swap(child/2, child)
+
+		// Parent node becomes new child
+		// for next iteration
+		child = child / 2
 	}
 }
 
-func (pq *priorityQueue[T]) sink(k int) {
-	// While k is a parent with some children
-	for 2*k <= pq.n {
+func (pq *priorityQueue[T]) sink(parent int) {
+	// While parent has some children
+	for 2*parent <= pq.n {
 
-		// First child of a parent k
-		j := 2 * k
+		// First child of a parent
+		child := 2 * parent
 
 		// If first child is less than second
 		// we choose second one for exchange.
 		// Parent should be swapped with biggest child
-		if j < pq.n && pq.less(pq.heap[j], pq.heap[j+1]) {
-			j++
+		if child < pq.n && pq.less(pq.heap[child], pq.heap[child+1]) {
+			child++
 		}
 
 		// If parent is already bigger than biggest child
 		// we found the position
-		if !pq.less(pq.heap[k], pq.heap[j]) {
+		if !pq.less(pq.heap[parent], pq.heap[child]) {
 			break
 		}
 
 		// swap parent node with child
-		pq.swap(j, k)
+		pq.swap(parent, child)
 
 		// child node is a new parent
-		k = j
+		parent = child
 	}
 }
