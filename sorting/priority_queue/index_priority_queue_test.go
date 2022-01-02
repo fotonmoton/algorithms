@@ -170,18 +170,18 @@ func TestMultiwayMerge(t *testing.T) {
 	expected := "AABBBCDEFFGHIIJNPQQZ"
 	actual := ""
 
-	pq := NewIPQ(func(t1, t2 string) bool { return t1 > t2 }, len(allStreams)+1)
+	pq := NewIPQ(func(t1, t2 string) bool { return t1 > t2 }, len(allStreams))
 
 	for i, stream := range allStreams {
 		rune, _, _ := stream.ReadRune()
-		pq.insert(i+1, string(rune))
+		pq.insert(i, string(rune))
 	}
 
 	for !pq.isEmpty() {
 		actual += string(pq.top())
 		streamIndex := pq.topKey()
 		pq.remove()
-		rune, _, err := allStreams[streamIndex-1].ReadRune()
+		rune, _, err := allStreams[streamIndex].ReadRune()
 		if err != io.EOF {
 			pq.insert(streamIndex, string(rune))
 		}
