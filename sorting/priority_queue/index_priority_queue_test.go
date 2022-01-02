@@ -1,6 +1,8 @@
 package priority_queue
 
 import (
+	"io"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -155,4 +157,35 @@ func TestIndexChange(t *testing.T) {
 	pq.change(2, 10)
 
 	assert.Equal(t, 10, pq.top())
+}
+
+func TestMultiwayMerge(t *testing.T) {
+	// ordered "streams"
+	firstStream := strings.NewReader("ABCFGIIZ")
+	secondStream := strings.NewReader("BDHPQQ")
+	thirdStream := strings.NewReader("ABEFJN")
+
+	allStreams := []*strings.Reader{firstStream, secondStream, thirdStream}
+
+	expected := "AABBBCDEFFGHIIJNPQQZ"
+	actual := ""
+
+	pq := NewIPQ(func(t1, t2 string) bool { return t1 > t2 }, len(allStreams)+1)
+
+	for i, stream := range allStreams {
+		rune, _, _ := stream.ReadRune()
+		pq.insert(i+1, string(rune))
+	}
+
+	for !pq.isEmpty() {
+		actual += string(pq.top())
+		streamIndex := pq.topKey()
+		pq.remove()
+		rune, _, err := allStreams[streamIndex-1].ReadRune()
+		if err != io.EOF {
+			pq.insert(streamIndex, string(rune))
+		}
+	}
+
+	assert.Equal(t, expected, actual)
 }
