@@ -1,4 +1,4 @@
-package sorting
+package priority_queue
 
 type PriorityQueue[T any] interface {
 	top() T
@@ -66,24 +66,6 @@ func (pq *priorityQueue[_]) isEmpty() bool {
 	return pq.n == 0
 }
 
-func (pq *priorityQueue[_]) swap(i, j int) {
-	pq.heap[i], pq.heap[j] = pq.heap[j], pq.heap[i]
-}
-
-func (pq *priorityQueue[T]) swim(child int) {
-	// Until we reach top of the heap
-	// and parent node is less than current child
-	for child > 1 && pq.less(pq.heap[child/2], pq.heap[child]) {
-
-		// We swap parent with the child
-		pq.swap(child/2, child)
-
-		// Parent node becomes new child
-		// for next iteration
-		child = child / 2
-	}
-}
-
 func (pq *priorityQueue[T]) sink(parent int) {
 	// While parent has some children
 	for 2*parent <= pq.n {
@@ -110,4 +92,22 @@ func (pq *priorityQueue[T]) sink(parent int) {
 		// child node is a new parent
 		parent = child
 	}
+}
+
+func (pq *priorityQueue[T]) swim(child int) {
+	// Until we reach top of the heap
+	// and parent node is less than current child
+	for child > 1 && pq.less(pq.heap[child/2], pq.heap[child]) {
+
+		// We swap parent with the child
+		pq.swap(child/2, child)
+
+		// Parent node becomes new child
+		// for next iteration
+		child = child / 2
+	}
+}
+
+func (pq *priorityQueue[T]) swap(i, j int) {
+	pq.heap[i], pq.heap[j] = pq.heap[j], pq.heap[i]
 }
