@@ -12,151 +12,151 @@ func TestNewIPQ(t *testing.T) {
 	q := NewIPQ(intDescending, 1)
 	assert.NotNil(t, q)
 
-	assert.Equal(t, 0, q.size())
-	assert.Equal(t, true, q.isEmpty())
-	assert.Equal(t, -1, q.topIndex())
+	assert.Equal(t, 0, q.Size())
+	assert.Equal(t, true, q.IsEmpty())
+	assert.Equal(t, -1, q.TopIndex())
 	// TODO: maybe should return nil?
-	// assert.Equal(t, 0, q.top())
+	// assert.Equal(t, 0, q.Top())
 }
 
 func TestIPQInsert(t *testing.T) {
 	pq := NewIPQ(intDescending, 10)
 
-	pq.insert(1, 3)
-	assert.Equal(t, 3, pq.top())
+	pq.Insert(1, 3)
+	assert.Equal(t, 3, pq.Top())
 
-	pq.insert(2, 4)
-	assert.Equal(t, 4, pq.top())
+	pq.Insert(2, 4)
+	assert.Equal(t, 4, pq.Top())
 
-	pq.insert(3, 1)
-	assert.Equal(t, 4, pq.top())
+	pq.Insert(3, 1)
+	assert.Equal(t, 4, pq.Top())
 
-	pq.insert(4, 4)
-	assert.Equal(t, 4, pq.top())
+	pq.Insert(4, 4)
+	assert.Equal(t, 4, pq.Top())
 }
 
 func TestMoreIPQInsert(t *testing.T) {
 	pq := NewIPQ(intDescending, 10)
 
-	pq.insert(1, 10)
+	pq.Insert(1, 10)
 
-	assert.Equal(t, 1, pq.topIndex())
-	assert.Equal(t, 10, pq.top())
-	assert.Equal(t, 1, pq.size())
-	assert.Equal(t, true, pq.contains(1))
-	assert.Equal(t, false, pq.isEmpty())
+	assert.Equal(t, 1, pq.TopIndex())
+	assert.Equal(t, 10, pq.Top())
+	assert.Equal(t, 1, pq.Size())
+	assert.Equal(t, true, pq.Contains(1))
+	assert.Equal(t, false, pq.IsEmpty())
 
-	pq.insert(2, 20)
+	pq.Insert(2, 20)
 
-	assert.Equal(t, 2, pq.topIndex())
-	assert.Equal(t, 20, pq.top())
-	assert.Equal(t, 2, pq.size())
-	assert.Equal(t, true, pq.contains(2))
-	assert.Equal(t, false, pq.isEmpty())
+	assert.Equal(t, 2, pq.TopIndex())
+	assert.Equal(t, 20, pq.Top())
+	assert.Equal(t, 2, pq.Size())
+	assert.Equal(t, true, pq.Contains(2))
+	assert.Equal(t, false, pq.IsEmpty())
 }
 
 func TestIPQRemove(t *testing.T) {
 	pq := NewIPQ(intDescending, 10)
 
-	pq.insert(1, 10)
+	pq.Insert(1, 10)
 
-	assert.Equal(t, 1, pq.topIndex())
-	assert.Equal(t, 10, pq.top())
-	assert.Equal(t, 1, pq.size())
-	assert.Equal(t, true, pq.contains(1))
-	assert.Equal(t, false, pq.isEmpty())
+	assert.Equal(t, 1, pq.TopIndex())
+	assert.Equal(t, 10, pq.Top())
+	assert.Equal(t, 1, pq.Size())
+	assert.Equal(t, true, pq.Contains(1))
+	assert.Equal(t, false, pq.IsEmpty())
 
-	pq.insert(2, 20)
+	pq.Insert(2, 20)
 
-	assert.Equal(t, 2, pq.topIndex())
-	assert.Equal(t, 20, pq.top())
-	assert.Equal(t, 2, pq.size())
-	assert.Equal(t, true, pq.contains(2))
-	assert.Equal(t, false, pq.isEmpty())
+	assert.Equal(t, 2, pq.TopIndex())
+	assert.Equal(t, 20, pq.Top())
+	assert.Equal(t, 2, pq.Size())
+	assert.Equal(t, true, pq.Contains(2))
+	assert.Equal(t, false, pq.IsEmpty())
 
-	removed := pq.remove()
+	removed := pq.Remove()
 
 	assert.Equal(t, 20, removed)
-	assert.Equal(t, 10, pq.top())
-	assert.Equal(t, 1, pq.size())
-	assert.Equal(t, false, pq.contains(2))
-	assert.Equal(t, true, pq.contains(1))
-	assert.Equal(t, false, pq.isEmpty())
+	assert.Equal(t, 10, pq.Top())
+	assert.Equal(t, 1, pq.Size())
+	assert.Equal(t, false, pq.Contains(2))
+	assert.Equal(t, true, pq.Contains(1))
+	assert.Equal(t, false, pq.IsEmpty())
 
-	removed = pq.remove()
+	removed = pq.Remove()
 
 	assert.Equal(t, 10, removed)
 	// TODO: should return nil?
-	// assert.Equal(t, "", pq.top())
-	assert.Equal(t, 0, pq.size())
-	assert.Equal(t, false, pq.contains(1))
-	assert.Equal(t, true, pq.isEmpty())
+	// assert.Equal(t, "", pq.Top())
+	assert.Equal(t, 0, pq.Size())
+	assert.Equal(t, false, pq.Contains(1))
+	assert.Equal(t, true, pq.IsEmpty())
 }
 
 func TestIPQRemoveAtIndex(t *testing.T) {
 	pq := NewIPQ(intDescending, 10)
 
-	// top -> 40 - 30 - 20 - 10
-	pq.insert(8, 10)
-	pq.insert(5, 20)
-	pq.insert(3, 30)
-	pq.insert(4, 40)
+	// Top -> 40 - 30 - 20 - 10
+	pq.Insert(8, 10)
+	pq.Insert(5, 20)
+	pq.Insert(3, 30)
+	pq.Insert(4, 40)
 
-	assert.Equal(t, 40, pq.top())
-	assert.Equal(t, 4, pq.topIndex())
+	assert.Equal(t, 40, pq.Top())
+	assert.Equal(t, 4, pq.TopIndex())
 
-	// top -> 40 - 30 - 10
-	removed := pq.removeAtIndex(5)
+	// Top -> 40 - 30 - 10
+	removed := pq.RemoveAtIndex(5)
 
 	assert.Equal(t, 20, removed)
-	assert.Equal(t, 40, pq.top())
-	assert.Equal(t, 4, pq.topIndex())
+	assert.Equal(t, 40, pq.Top())
+	assert.Equal(t, 4, pq.TopIndex())
 
-	// top -> 30 - 10
-	removed = pq.removeAtIndex(4)
+	// Top -> 30 - 10
+	removed = pq.RemoveAtIndex(4)
 
 	assert.Equal(t, 40, removed)
-	assert.Equal(t, 30, pq.top())
-	assert.Equal(t, 3, pq.topIndex())
+	assert.Equal(t, 30, pq.Top())
+	assert.Equal(t, 3, pq.TopIndex())
 
-	// top -> 30 - 20 - 10
-	pq.insert(5, 20)
+	// Top -> 30 - 20 - 10
+	pq.Insert(5, 20)
 
-	assert.Equal(t, 30, pq.top())
-	assert.Equal(t, 3, pq.topIndex())
+	assert.Equal(t, 30, pq.Top())
+	assert.Equal(t, 3, pq.TopIndex())
 
-	// top -> 10
-	removed = pq.removeAtIndex(3)
+	// Top -> 10
+	removed = pq.RemoveAtIndex(3)
 	assert.Equal(t, 30, removed)
-	removed = pq.removeAtIndex(5)
+	removed = pq.RemoveAtIndex(5)
 	assert.Equal(t, 20, removed)
 
-	assert.Equal(t, 10, pq.top())
-	assert.Equal(t, 8, pq.topIndex())
-	assert.Equal(t, 1, pq.size())
-	assert.Equal(t, false, pq.contains(5))
-	assert.Equal(t, false, pq.contains(4))
-	assert.Equal(t, false, pq.contains(3))
-	assert.Equal(t, true, pq.contains(8))
-	assert.Equal(t, false, pq.isEmpty())
+	assert.Equal(t, 10, pq.Top())
+	assert.Equal(t, 8, pq.TopIndex())
+	assert.Equal(t, 1, pq.Size())
+	assert.Equal(t, false, pq.Contains(5))
+	assert.Equal(t, false, pq.Contains(4))
+	assert.Equal(t, false, pq.Contains(3))
+	assert.Equal(t, true, pq.Contains(8))
+	assert.Equal(t, false, pq.IsEmpty())
 }
 
 func TestIndexChange(t *testing.T) {
 	pq := NewIPQ(intDescending, 10)
 
-	pq.insert(1, 9)
-	pq.insert(2, 8)
-	pq.insert(3, 12)
+	pq.Insert(1, 9)
+	pq.Insert(2, 8)
+	pq.Insert(3, 12)
 
-	assert.Equal(t, 12, pq.top())
+	assert.Equal(t, 12, pq.Top())
 
-	pq.change(3, 7)
+	pq.Change(3, 7)
 
-	assert.Equal(t, 9, pq.top())
+	assert.Equal(t, 9, pq.Top())
 
-	pq.change(2, 10)
+	pq.Change(2, 10)
 
-	assert.Equal(t, 10, pq.top())
+	assert.Equal(t, 10, pq.Top())
 }
 
 func TestMultiwayMerge(t *testing.T) {
@@ -174,16 +174,16 @@ func TestMultiwayMerge(t *testing.T) {
 
 	for i, stream := range allStreams {
 		rune, _, _ := stream.ReadRune()
-		pq.insert(i, string(rune))
+		pq.Insert(i, string(rune))
 	}
 
-	for !pq.isEmpty() {
-		actual += string(pq.top())
-		streamIndex := pq.topIndex()
-		pq.remove()
+	for !pq.IsEmpty() {
+		actual += string(pq.Top())
+		streamIndex := pq.TopIndex()
+		pq.Remove()
 		rune, _, err := allStreams[streamIndex].ReadRune()
 		if err != io.EOF {
-			pq.insert(streamIndex, string(rune))
+			pq.Insert(streamIndex, string(rune))
 		}
 	}
 

@@ -1,15 +1,15 @@
 package priority_queue
 
 type IndexPriorityQueue[T any] interface {
-	top() T                    // get item with biggest priority
-	topIndex() int             // get index of an item with biggest priority
-	remove() T                 // removes item with the biggest priority
-	removeAtIndex(index int) T // removes item at specified index
-	insert(index int, item T)  // adds item at specified index
-	change(index int, item T)  // changes item at specified index and preserves ordering
-	contains(index int) bool   // checks if item exists at specified index
-	isEmpty() bool
-	size() int
+	Top() T                    // get item with biggest priority
+	TopIndex() int             // get index of an item with biggest priority
+	Remove() T                 // removes item with the biggest priority
+	RemoveAtIndex(index int) T // removes item at specified index
+	Insert(index int, item T)  // adds item at specified index
+	Change(index int, item T)  // changes item at specified index and preserves ordering
+	Contains(index int) bool   // checks if item exists at specified index
+	IsEmpty() bool
+	Size() int
 }
 
 type indexPriorityQueue[T any] struct {
@@ -47,15 +47,15 @@ func NewIPQ[T any](less func(T, T) bool, indexSize int) IndexPriorityQueue[T] {
 	return &indexPriorityQueue[T]{n, items, pq, qp, less}
 }
 
-func (q *indexPriorityQueue[T]) top() T {
+func (q *indexPriorityQueue[T]) Top() T {
 	return q.items[q.pq[0]]
 }
 
-func (q *indexPriorityQueue[T]) topIndex() int {
+func (q *indexPriorityQueue[T]) TopIndex() int {
 	return q.pq[0]
 }
 
-func (q *indexPriorityQueue[T]) insert(index int, item T) {
+func (q *indexPriorityQueue[T]) Insert(index int, item T) {
 	q.pq[q.n] = index
 	q.qp[index] = q.n
 	q.items[index] = item
@@ -63,11 +63,11 @@ func (q *indexPriorityQueue[T]) insert(index int, item T) {
 	q.n++
 }
 
-func (q *indexPriorityQueue[T]) remove() T {
-	return q.removeAtIndex(q.topIndex())
+func (q *indexPriorityQueue[T]) Remove() T {
+	return q.RemoveAtIndex(q.TopIndex())
 }
 
-func (q *indexPriorityQueue[T]) removeAtIndex(index int) T {
+func (q *indexPriorityQueue[T]) RemoveAtIndex(index int) T {
 	pivot := q.qp[index]
 	q.n--
 	q.swap(pivot, q.n)
@@ -80,21 +80,21 @@ func (q *indexPriorityQueue[T]) removeAtIndex(index int) T {
 	return q.items[index]
 }
 
-func (q *indexPriorityQueue[T]) change(index int, item T) {
+func (q *indexPriorityQueue[T]) Change(index int, item T) {
 	q.items[index] = item
 	q.swim(q.qp[index])
 	q.sink(q.qp[index])
 }
 
-func (pq *indexPriorityQueue[_]) size() int {
+func (pq *indexPriorityQueue[_]) Size() int {
 	return pq.n
 }
 
-func (pq *indexPriorityQueue[_]) isEmpty() bool {
+func (pq *indexPriorityQueue[_]) IsEmpty() bool {
 	return pq.n == 0
 }
 
-func (q *indexPriorityQueue[_]) contains(index int) bool {
+func (q *indexPriorityQueue[_]) Contains(index int) bool {
 	return q.qp[index] != -1
 }
 
