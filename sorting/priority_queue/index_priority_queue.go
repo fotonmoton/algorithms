@@ -1,13 +1,13 @@
 package priority_queue
 
 type IndexPriorityQueue[T any] interface {
-	top() T                 // get item with biggest priority
-	topKey() int            // get key of an item with biggest priority
-	remove() T              // removes item with the biggest priority
-	removeKey(key int) T    // removes item with specified key
-	insert(key int, item T) // adds item with specified key
-	change(key int, item T) // changes item with specified key
-	contains(key int) bool  // checks if key exists in queue
+	top() T                    // get item with biggest priority
+	topIndex() int             // get index of an item with biggest priority
+	remove() T                 // removes item with the biggest priority
+	removeAtIndex(index int) T // removes item at specified index
+	insert(index int, item T)  // adds item at specified index
+	change(index int, item T)  // changes item at specified index and preserves ordering
+	contains(index int) bool   // checks if item exists at specified index
 	isEmpty() bool
 	size() int
 }
@@ -15,13 +15,13 @@ type IndexPriorityQueue[T any] interface {
 type indexPriorityQueue[T any] struct {
 	n int
 	// unordered items.
-	// items[key] = item
+	// items[index] = item
 	items []T
 	// priority queue. Contains keys for items in priority order.
 	// items[pq[1]] = item with biggest priority
 	pq []int
-	// "reverse" for pq. Maps item key to priority
-	// qp[key] = priority index, qp[pq[key]] = pq[qp[key]] = key
+	// "reverse" for pq. Maps item index to priority
+	// qp[index] = priority index, qp[pq[index]] = pq[qp[index]] = index
 	qp []int
 	// "less" function. Depending on desired order first element
 	// not necessary less than a second
@@ -51,39 +51,39 @@ func (q *indexPriorityQueue[T]) top() T {
 	return q.items[q.pq[0]]
 }
 
-func (q *indexPriorityQueue[T]) topKey() int {
+func (q *indexPriorityQueue[T]) topIndex() int {
 	return q.pq[0]
 }
 
-func (q *indexPriorityQueue[T]) insert(key int, item T) {
-	q.pq[q.n] = key
-	q.qp[key] = q.n
-	q.items[key] = item
+func (q *indexPriorityQueue[T]) insert(index int, item T) {
+	q.pq[q.n] = index
+	q.qp[index] = q.n
+	q.items[index] = item
 	q.swim(q.n)
 	q.n++
 }
 
 func (q *indexPriorityQueue[T]) remove() T {
-	return q.removeKey(q.topKey())
+	return q.removeAtIndex(q.topIndex())
 }
 
-func (q *indexPriorityQueue[T]) removeKey(key int) T {
-	pivot := q.qp[key]
+func (q *indexPriorityQueue[T]) removeAtIndex(index int) T {
+	pivot := q.qp[index]
 	q.n--
 	q.swap(pivot, q.n)
 	q.swim(pivot)
 	q.sink(pivot)
 	// TODO: need to remove actual item from items array
 	// to prevent memory leak
-	q.qp[key] = -1
+	q.qp[index] = -1
 	q.pq[q.n] = -1
-	return q.items[key]
+	return q.items[index]
 }
 
-func (q *indexPriorityQueue[T]) change(key int, item T) {
-	q.items[key] = item
-	q.swim(q.qp[key])
-	q.sink(q.qp[key])
+func (q *indexPriorityQueue[T]) change(index int, item T) {
+	q.items[index] = item
+	q.swim(q.qp[index])
+	q.sink(q.qp[index])
 }
 
 func (pq *indexPriorityQueue[_]) size() int {
@@ -94,8 +94,8 @@ func (pq *indexPriorityQueue[_]) isEmpty() bool {
 	return pq.n == 0
 }
 
-func (q *indexPriorityQueue[_]) contains(key int) bool {
-	return q.qp[key] != -1
+func (q *indexPriorityQueue[_]) contains(index int) bool {
+	return q.qp[index] != -1
 }
 
 func (q *indexPriorityQueue[T]) sink(parent int) {

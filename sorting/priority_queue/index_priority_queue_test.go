@@ -14,7 +14,7 @@ func TestNewIPQ(t *testing.T) {
 
 	assert.Equal(t, 0, q.size())
 	assert.Equal(t, true, q.isEmpty())
-	assert.Equal(t, -1, q.topKey())
+	assert.Equal(t, -1, q.topIndex())
 	// TODO: maybe should return nil?
 	// assert.Equal(t, 0, q.top())
 }
@@ -40,7 +40,7 @@ func TestMoreIPQInsert(t *testing.T) {
 
 	pq.insert(1, 10)
 
-	assert.Equal(t, 1, pq.topKey())
+	assert.Equal(t, 1, pq.topIndex())
 	assert.Equal(t, 10, pq.top())
 	assert.Equal(t, 1, pq.size())
 	assert.Equal(t, true, pq.contains(1))
@@ -48,7 +48,7 @@ func TestMoreIPQInsert(t *testing.T) {
 
 	pq.insert(2, 20)
 
-	assert.Equal(t, 2, pq.topKey())
+	assert.Equal(t, 2, pq.topIndex())
 	assert.Equal(t, 20, pq.top())
 	assert.Equal(t, 2, pq.size())
 	assert.Equal(t, true, pq.contains(2))
@@ -60,7 +60,7 @@ func TestIPQRemove(t *testing.T) {
 
 	pq.insert(1, 10)
 
-	assert.Equal(t, 1, pq.topKey())
+	assert.Equal(t, 1, pq.topIndex())
 	assert.Equal(t, 10, pq.top())
 	assert.Equal(t, 1, pq.size())
 	assert.Equal(t, true, pq.contains(1))
@@ -68,7 +68,7 @@ func TestIPQRemove(t *testing.T) {
 
 	pq.insert(2, 20)
 
-	assert.Equal(t, 2, pq.topKey())
+	assert.Equal(t, 2, pq.topIndex())
 	assert.Equal(t, 20, pq.top())
 	assert.Equal(t, 2, pq.size())
 	assert.Equal(t, true, pq.contains(2))
@@ -103,36 +103,36 @@ func TestIPQRemoveAtIndex(t *testing.T) {
 	pq.insert(4, 40)
 
 	assert.Equal(t, 40, pq.top())
-	assert.Equal(t, 4, pq.topKey())
+	assert.Equal(t, 4, pq.topIndex())
 
 	// top -> 40 - 30 - 10
-	removed := pq.removeKey(5)
+	removed := pq.removeAtIndex(5)
 
 	assert.Equal(t, 20, removed)
 	assert.Equal(t, 40, pq.top())
-	assert.Equal(t, 4, pq.topKey())
+	assert.Equal(t, 4, pq.topIndex())
 
 	// top -> 30 - 10
-	removed = pq.removeKey(4)
+	removed = pq.removeAtIndex(4)
 
 	assert.Equal(t, 40, removed)
 	assert.Equal(t, 30, pq.top())
-	assert.Equal(t, 3, pq.topKey())
+	assert.Equal(t, 3, pq.topIndex())
 
 	// top -> 30 - 20 - 10
 	pq.insert(5, 20)
 
 	assert.Equal(t, 30, pq.top())
-	assert.Equal(t, 3, pq.topKey())
+	assert.Equal(t, 3, pq.topIndex())
 
 	// top -> 10
-	removed = pq.removeKey(3)
+	removed = pq.removeAtIndex(3)
 	assert.Equal(t, 30, removed)
-	removed = pq.removeKey(5)
+	removed = pq.removeAtIndex(5)
 	assert.Equal(t, 20, removed)
 
 	assert.Equal(t, 10, pq.top())
-	assert.Equal(t, 8, pq.topKey())
+	assert.Equal(t, 8, pq.topIndex())
 	assert.Equal(t, 1, pq.size())
 	assert.Equal(t, false, pq.contains(5))
 	assert.Equal(t, false, pq.contains(4))
@@ -179,7 +179,7 @@ func TestMultiwayMerge(t *testing.T) {
 
 	for !pq.isEmpty() {
 		actual += string(pq.top())
-		streamIndex := pq.topKey()
+		streamIndex := pq.topIndex()
 		pq.remove()
 		rune, _, err := allStreams[streamIndex].ReadRune()
 		if err != io.EOF {
