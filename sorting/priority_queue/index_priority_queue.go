@@ -15,8 +15,10 @@ type IndexPriorityQueue[T any] interface {
 type indexPriorityQueue[T any] struct {
 	n int
 	// unordered items.
-	// items[index] = item
-	items []T
+	// items[index] = item.
+	// we store pointers instead of values to prevent memory leaks
+	// by setting nil for removed items
+	items []*T
 	// priority queue. Contains keys for items in priority order.
 	// items[pq[1]] = item with biggest priority
 	pq []int
@@ -32,7 +34,7 @@ type indexPriorityQueue[T any] struct {
 // TODO: can we construct queue without bounded index size?
 func NewIPQ[T any](less func(T, T) bool, indexSize int) IndexPriorityQueue[T] {
 	n := 0
-	items := make([]T, indexSize)
+	items := make([]*T, indexSize)
 	pq := make([]int, indexSize)
 	qp := make([]int, indexSize)
 
@@ -48,7 +50,7 @@ func NewIPQ[T any](less func(T, T) bool, indexSize int) IndexPriorityQueue[T] {
 }
 
 func (q *indexPriorityQueue[T]) Top() T {
-	return q.items[q.pq[0]]
+	return *q.items[q.pq[0]]
 }
 
 func (q *indexPriorityQueue[T]) TopIndex() int {
@@ -58,7 +60,7 @@ func (q *indexPriorityQueue[T]) TopIndex() int {
 func (q *indexPriorityQueue[T]) Insert(index int, item T) {
 	q.pq[q.n] = index
 	q.qp[index] = q.n
-	q.items[index] = item
+	q.items[index] = &item
 	q.swim(q.n)
 	q.n++
 }
@@ -69,19 +71,19 @@ func (q *indexPriorityQueue[T]) Remove() T {
 
 func (q *indexPriorityQueue[T]) RemoveAtIndex(index int) T {
 	pivot := q.qp[index]
+	removed := q.items[index]
 	q.n--
 	q.swap(pivot, q.n)
 	q.swim(pivot)
 	q.sink(pivot)
-	// TODO: need to remove actual item from items array
-	// to prevent memory leak
+	q.items[index] = nil
 	q.qp[index] = -1
 	q.pq[q.n] = -1
-	return q.items[index]
+	return *removed
 }
 
 func (q *indexPriorityQueue[T]) Change(index int, item T) {
-	q.items[index] = item
+	q.items[index] = &item
 	q.swim(q.qp[index])
 	q.sink(q.qp[index])
 }
@@ -107,11 +109,11 @@ func (q *indexPriorityQueue[T]) sink(parent int) {
 			break
 		}
 
-		if child+1 < q.n && q.less(q.items[q.pq[child]], q.items[q.pq[child+1]]) {
+		if child+1 < q.n && q.less(*q.items[q.pq[child]], *q.items[q.pq[child+1]]) {
 			child++
 		}
 
-		if !q.less(q.items[q.pq[parent]], q.items[q.pq[child]]) {
+		if !q.less(*q.items[q.pq[parent]], *q.items[q.pq[child]]) {
 			break
 		}
 
@@ -126,7 +128,7 @@ func (q *indexPriorityQueue[T]) swim(child int) {
 	for {
 		parent := (child - 1) / 2
 
-		if child <= 0 || q.less(q.items[q.pq[child]], q.items[q.pq[parent]]) {
+		if child <= 0 || q.less(*q.items[q.pq[child]], *q.items[q.pq[parent]]) {
 			break
 		}
 
