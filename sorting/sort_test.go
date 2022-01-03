@@ -73,3 +73,13 @@ func BenchmarkQuick(b *testing.B) {
 		BenchmarkSort(10000, Quick[int])
 	}
 }
+
+func TestHeap(t *testing.T) {
+	CheckSliceSorter(Heap[int])
+}
+
+func BenchmarkHeap(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		BenchmarkSort(10000, Heap[int])
+	}
+}

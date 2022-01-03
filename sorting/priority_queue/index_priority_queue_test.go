@@ -15,8 +15,6 @@ func TestNewIPQ(t *testing.T) {
 	assert.Equal(t, 0, q.Size())
 	assert.Equal(t, true, q.IsEmpty())
 	assert.Equal(t, -1, q.TopIndex())
-	// TODO: maybe should return nil?
-	// assert.Equal(t, 0, q.Top())
 }
 
 func TestIPQInsert(t *testing.T) {
