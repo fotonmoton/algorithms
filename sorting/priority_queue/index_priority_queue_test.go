@@ -160,32 +160,36 @@ func TestIndexChange(t *testing.T) {
 }
 
 func TestMultiwayMerge(t *testing.T) {
+
+	multiwayMerge := func(streams ...*strings.Reader) string {
+		q := NewIPQ(func(t1, t2 rune) bool { return t1 > t2 }, len(streams))
+		b := strings.Builder{}
+
+		for i, stream := range streams {
+			rune, _, _ := stream.ReadRune()
+			q.Insert(i, rune)
+		}
+
+		for !q.IsEmpty() {
+			b.WriteRune(q.Top())
+			streamIndex := q.TopIndex()
+			q.Remove()
+			rune, _, err := streams[streamIndex].ReadRune()
+			if err != io.EOF {
+				q.Insert(streamIndex, rune)
+			}
+		}
+
+		return b.String()
+	}
+
 	// ordered "streams"
 	firstStream := strings.NewReader("ABCFGIIZ")
 	secondStream := strings.NewReader("BDHPQQ")
 	thirdStream := strings.NewReader("ABEFJN")
 
-	allStreams := []*strings.Reader{firstStream, secondStream, thirdStream}
-
 	expected := "AABBBCDEFFGHIIJNPQQZ"
-	actual := ""
-
-	pq := NewIPQ(func(t1, t2 string) bool { return t1 > t2 }, len(allStreams))
-
-	for i, stream := range allStreams {
-		rune, _, _ := stream.ReadRune()
-		pq.Insert(i, string(rune))
-	}
-
-	for !pq.IsEmpty() {
-		actual += string(pq.Top())
-		streamIndex := pq.TopIndex()
-		pq.Remove()
-		rune, _, err := allStreams[streamIndex].ReadRune()
-		if err != io.EOF {
-			pq.Insert(streamIndex, string(rune))
-		}
-	}
+	actual := multiwayMerge(firstStream, secondStream, thirdStream)
 
 	assert.Equal(t, expected, actual)
 }
